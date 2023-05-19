@@ -5,8 +5,10 @@ using UnityEngine;
 public class Fireball : MonoBehaviour
 {
     [SerializeField] float _speed = 20f;
-    [SerializeField] float _damage;
+    [SerializeField] int _damage = 10;
     Rigidbody2D _rb;
+
+    [SerializeField] GameObject _explosion;
 
     private void Awake()
     {
@@ -20,6 +22,10 @@ public class Fireball : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        var target = collision.collider.GetComponent<IDamageable>();
+        if (target != null) target.TakeDamage(_damage);
+        ContactPoint2D cp = collision.GetContact(0);
+        Instantiate(_explosion, cp.point, Quaternion.identity);
         Destroy(gameObject);
     }
 }

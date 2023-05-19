@@ -14,6 +14,10 @@ public class PlayerMovement : MonoBehaviour
     [Header("Jump")]
     [SerializeField] float _jumpForce = 2f;
     [SerializeField] bool _grounded;
+    [SerializeField] float _inputBufferDuration;
+    [SerializeField] float _coyoteTime;
+    private float _coyoteTimer;
+    private float _inputTimer;
 
     [Header("Checks")]
     [SerializeField] private Transform _headCheck;
@@ -36,14 +40,18 @@ public class PlayerMovement : MonoBehaviour
     {
         _rb = GetComponent<Rigidbody2D>();
         _anim = GetComponent<Animator>();
+        _coyoteTimer = _coyoteTime;
+        _inputTimer = _inputBufferDuration;
     }
 
     // Update is called once per frame
     void Update()
     {
+
         float xMov = Input.GetAxis("Horizontal");
 
         GroundCheck();
+        JumpInput();
         _movementDirection = new Vector3(xMov, 0).normalized;
 
         if (Mathf.Abs(xMov) >= 0.1f) _anim.SetBool("isRunning", true);
@@ -51,19 +59,29 @@ public class PlayerMovement : MonoBehaviour
 
 
 
-        if (_grounded && Input.GetKeyDown(KeyCode.W))
+        if (_coyoteTimer > 0f && _inputTimer > 0)
         {
             _anim.SetBool("isJumping", true);
             _rb.velocity = new Vector2(_rbVelocity.x, _jumpForce);
         }
 
-        if (!_grounded && Input.GetKeyUp(KeyCode.W) && _rb.velocity.y > 0f)
+        if (Input.GetKeyUp(KeyCode.W) && _rb.velocity.y > 0f)
         {
-            _rb.velocity = new Vector2(_rbVelocity.x, _rbVelocity.y * 0.2f);
+            _rb.velocity = new Vector2(_rbVelocity.x, _rbVelocity.y * 0.5f);
+            _coyoteTimer = 0f;
         }
 
 
 
+    }
+
+    private void JumpInput()
+    {
+        if (Input.GetKeyDown(KeyCode.W))
+        {
+            _inputTimer = _inputBufferDuration;
+        }
+        else _inputTimer -= Time.deltaTime;
     }
 
     private void Flip()
@@ -89,10 +107,15 @@ public class PlayerMovement : MonoBehaviour
     {
         if (Physics2D.OverlapCircle(_groundCheck.position, _groundCheckRadius, _whatIsGround))
         {
+            _coyoteTimer = _coyoteTime;
             _grounded = true;
             _anim.SetBool("isJumping", false);
         }
-        else _grounded = false;
+        else
+        {
+            _coyoteTimer -= Time.deltaTime;
+            _grounded = false;
+        }
     }
 
     private void OnDrawGizmos()

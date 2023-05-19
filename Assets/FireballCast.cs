@@ -11,11 +11,14 @@ public class FireballCast : MonoBehaviour
     float _timeSinceLastUse;
 
     Animator _anim;
+    AudioSource _audioSource;
+    [SerializeField] AudioClip _pop;
     // Start is called before the first frame update
     void Start()
     {
         _timeSinceLastUse = _cooldown;
         _anim = GetComponent<Animator>();
+        _audioSource = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -23,7 +26,7 @@ public class FireballCast : MonoBehaviour
     {
         _timeSinceLastUse += Time.deltaTime;
 
-        if (_timeSinceLastUse >= _cooldown && Input.GetMouseButtonDown(0))
+        if (_timeSinceLastUse >= _cooldown && Input.GetKey(KeyCode.Space))
         {
             _timeSinceLastUse = 0;
             CallFireball();
@@ -37,7 +40,8 @@ public class FireballCast : MonoBehaviour
 
     public void ExecuteFirebal()
     {
-        Instantiate(_fireball, _firePoint.position, Quaternion.LookRotation(AimFireball()));
+        _audioSource.PlayOneShot(_pop);
+        Instantiate(_fireball, _firePoint.position, Quaternion.LookRotation(/*AimFireball()*/ _firePoint.position - transform.position));
     }
 
     private Vector3 AimFireball()
