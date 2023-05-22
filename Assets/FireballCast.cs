@@ -36,11 +36,12 @@ public class FireballCast : MonoBehaviour
     private void CallFireball()
     {
         _anim.SetTrigger("Fireball");
+        _audioSource.PlayOneShot(_pop);
     }
 
     public void ExecuteFirebal()
     {
-        _audioSource.PlayOneShot(_pop);
+       
         Instantiate(_fireball, _firePoint.position, Quaternion.LookRotation(/*AimFireball()*/ _firePoint.position - transform.position));
     }
 
