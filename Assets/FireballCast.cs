@@ -7,6 +7,7 @@ public class FireballCast : MonoBehaviour
 {
     [SerializeField] Transform _firePoint;
     [SerializeField] GameObject _fireball;
+    [SerializeField] string _triggerName;
     [SerializeField] float _cooldown = 1f;
     float _timeSinceLastUse;
 
@@ -35,13 +36,12 @@ public class FireballCast : MonoBehaviour
 
     private void CallFireball()
     {
-        _anim.SetTrigger("Fireball");
+        _anim.SetTrigger(_triggerName);
         _audioSource.PlayOneShot(_pop);
     }
 
     public void ExecuteFirebal()
     {
-       
         Instantiate(_fireball, _firePoint.position, Quaternion.LookRotation(/*AimFireball()*/ _firePoint.position - transform.position));
     }
 

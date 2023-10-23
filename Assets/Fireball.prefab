@@ -88,6 +88,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _speed: 100
   _damage: 0
+  _maxLifeTime: 10
+  _explosion: {fileID: 0}
+  _sound: {fileID: 0}
+  _soundVolume: 0.5
 --- !u!1001 &2293587726096866045
 PrefabInstance:
   m_ObjectHideFlags: 0
